@@ -1,9 +1,12 @@
 name: Build ARM64 Theme Package
 
 on:
-  push:
-    branches: [ main, master ]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g. v1.0.0)'
+        required: true
+        default: 'v1.0.0'
 
 jobs:
   build:
@@ -26,11 +29,20 @@ jobs:
         run: find MyThemeRootless -name ".DS_Store" -type f -delete
 
       - name: Build .deb package
-        run: dpkg-deb -b -Zxz MyThemeRootless com.z.darkthemeaddon_1.0.0_iphoneos-arm64.deb
+        run: dpkg-deb -b -Zxz MyThemeRootless com.z.darkthemeaddon_${{ github.event.inputs.tag }}_iphoneos-arm64.deb
 
-      - name: Upload .deb artifact
-        uses: actions/upload-artifact@v4
+      - name: Create GitHub Release and upload .deb
+        uses: softprops/action-gh-release@v2
         with:
-          name: com.z.darkthemeaddon_1.0.0_iphoneos-arm64
-          path: com.z.darkthemeaddon_1.0.0_iphoneos-arm64.deb
-          retention-days: 30
+          tag_name: ${{ github.event.inputs.tag }}
+          name: "Z's Dark Theme Addon ${{ github.event.inputs.tag }}"
+          body: |
+            ## Z's Dark Theme Addon ${{ github.event.inputs.tag }}
+            
+            Rootless dark theme for Brightspace Pulse, StudentSquare, StudentVUE, MeloNX, and OCC Safe.
+            
+            ### Install
+            Download the `.deb` below and open with Sileo, or add this repo to Sileo.
+          files: com.z.darkthemeaddon_${{ github.event.inputs.tag }}_iphoneos-arm64.deb
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
