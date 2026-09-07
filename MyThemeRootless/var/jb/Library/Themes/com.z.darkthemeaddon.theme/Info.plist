@@ -6,7 +6,37 @@
     <string>Z's Dark Theme Addon</string>
     <key>ThemeAuthor</key>
     <string>Z</string>
+
+    <!-- Apply icon mask shape -->
     <key>IB-MaskIcons</key>
     <true/>
+
+    <!-- Theme icons in the home screen -->
+    <key>IB-Theme</key>
+    <true/>
+
+    <!-- Apply theme in Settings app -->
+    <key>IB-ThemedSettings</key>
+    <true/>
+
+    <!-- Apply theme in notification banners -->
+    <key>IB-ThemedNotifications</key>
+    <true/>
+
+    <!-- Apply theme in Spotlight search results -->
+    <key>IB-ThemedSpotlight</key>
+    <true/>
+
+    <!-- Apply theme in app switcher / multitasking -->
+    <key>IB-ThemedAppSwitcher</key>
+    <true/>
+
+    <!-- Apply theme everywhere else (folders, menus) -->
+    <key>IB-ThemedEverywhere</key>
+    <true/>
+
+    <!-- Use @3x resolution assets -->
+    <key>IB-IconScale</key>
+    <string>3</string>
 </dict>
 </plist>
