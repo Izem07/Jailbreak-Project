@@ -1,0 +1,36 @@
+name: Build ARM64 Theme Package
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dpkg tools
+        run: sudo apt-get install -y dpkg
+
+      - name: Set file permissions
+        run: |
+          chmod -R 0755 MyThemeRootless/DEBIAN
+          chmod 0755 MyThemeRootless/DEBIAN/postinst
+          chmod -R 0755 MyThemeRootless/var
+
+      - name: Clean macOS metadata
+        run: find MyThemeRootless -name ".DS_Store" -type f -delete
+
+      - name: Build .deb package
+        run: dpkg-deb -b -Zxz MyThemeRootless com.z.darkthemeaddon_1.0.0_iphoneos-arm64.deb
+
+      - name: Upload .deb artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: com.z.darkthemeaddon_1.0.0_iphoneos-arm64
+          path: com.z.darkthemeaddon_1.0.0_iphoneos-arm64.deb
+          retention-days: 30
