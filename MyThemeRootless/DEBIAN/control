@@ -1,0 +1,9 @@
+Package: com.z.darkthemeaddon
+Name: Z's Dark Theme Addon
+Version: 1.0.0
+Architecture: iphoneos-arm64
+Description: Dark theme addon icons for Brightspace Pulse, StudentSquare, StudentVUE, MeloNX, and OCC Safe.
+Maintainer: Z <dev@local>
+Author: Z
+Section: Themes
+Depends: com.spark.snowboard | com.anemonetheming.anemone

@@ -1,69 +1,52 @@
-# iOS App Architecture & Configuration
+# Dark Custom Theme
 
-This repository contains reference documentation on the standard iOS application lifecycle, bundle structure, and command-line configuration tools.
+A rootless-compatible (`iphoneos-arm64`) icon theme for jailbroken iOS devices. Installs via Sileo and applies through SnowBoard.
 
-## 1. The iOS App Lifecycle
+## Requirements
 
-The iOS operating system strictly manages application states to conserve battery life and system resources.
+- Rootless jailbreak (e.g. Dopamine)
+- [Sileo](https://getsileo.app/) package manager
+- [SnowBoard](https://repo.spark.sh/) theme engine
 
-*   **Initialization and Launch:** When an app is launched, the system loads the UI and calls `application(_:didFinishLaunchingWithOptions:)`.
-*   **State Transitions:**
-    *   **Not Running:** The app has not been launched or was terminated.
-    *   **Inactive:** The app is running in the foreground but is not currently receiving events.
-    *   **Active:** The normal foreground state where the app is receiving events and updating the UI.
-    *   **Background:** The app is no longer on screen but is executing code briefly before suspension.
-    *   **Suspended:** The app remains in memory but executes no code.
+## Project Structure
 
-## 2. iOS App Bundle Directory Layout
-
-An `.ipa` file is fundamentally a standard ZIP archive. Inside, you will find a root folder named `Payload/`, and inside it is the actual `.app` bundle.
-
-*   **Main Executable (`MyApp`):** The compiled application binary.
-*   **`Info.plist`:** The primary configuration manifest file containing metadata like the Bundle Identifier and version numbers.
-*   **`embedded.mobileprovision`:** The provisioning profile applied during compilation.
-*   **`Assets.car`:** The compiled asset catalog storing optimized images and colors.
-*   **`.lproj` Folders:** Stores localized resources and compiled Interface Builder files.
-*   **`Frameworks/` & `PlugIns/`:** Directories holding dynamic libraries and App Extensions.
-*   **`_CodeSignature/`:** Contains cryptographic hashes to ensure the app's resources haven't been tampered with.
-
-## 3. Repackaging into a Valid `.ipa`
-
-To package an `.app` bundle back into an `.ipa` format using standard command-line utilities:
-
-```bash
-# Create the Payload directory
-mkdir Payload
-
-# Move your .app bundle into the Payload directory
-mv MyApp.app Payload/
-
-# Compress using the standard zip utility
-zip -qr MyRepackagedApp.ipa Payload/
+```
+MyThemeRootless/
+├── DEBIAN/
+│   └── control                          ← package metadata
+└── var/jb/Library/Themes/
+    └── DarkCustom.theme/
+        ├── Info.plist                   ← theme configuration
+        └── IconBundles/                 ← @3x icon PNGs go here
 ```
 
-*Note: The operating system will refuse to launch the app unless the entire bundle is properly signed with a valid developer certificate and provisioning profile.*
+## Adding Icons
 
-## 4. Modifying the Info.plist
+Drop your icon files into `MyThemeRootless/var/jb/Library/Themes/DarkCustom.theme/IconBundles/`.
 
-Standard text editors will corrupt binary `.plist` files. Use native macOS command-line utilities designed for property lists.
+Icons must be named by bundle identifier with `@3x.png` suffix, for example:
 
-**Using `plutil` (Modern Approach):**
-```bash
-# Syntax: plutil -replace [Key] -[Type] [NewValue] [PathToPlist]
-plutil -replace CFBundleIdentifier -string "com.yourdomain.newapp" Payload/MyApp.app/Info.plist
+```
+com.d2l.brightspace.pulse@3x.png
+com.parentsquare.studentsquare.app@3x.png
+com.edupoint.studentvue1@3x.png
+com.stossy11.MeloNX@3x.png
+com.cutcom.apparmor.oaklandcc@3x.png
 ```
 
-**Verifying Structural Validity:**
+## Building
+
+Requires `dpkg-deb` (available on macOS via Homebrew or any Linux terminal).
+
 ```bash
-# Lint the plist file to check for structural errors
-plutil -lint Payload/MyApp.app/Info.plist
+chmod +x build.sh
+./build.sh
 ```
 
-**Converting Plist Formats (Optional):**
-```bash
-# Convert Binary to XML1 (Human-readable)
-plutil -convert xml1 Payload/MyApp.app/Info.plist
+Output: `com.custom.darktheme_1.0.0_iphoneos-arm64.deb`
 
-# Convert XML back to Binary (Optimized for iOS)
-plutil -convert binary1 Payload/MyApp.app/Info.plist
-```
+## Installing
+
+1. Transfer the `.deb` to your device
+2. Open it with Sileo to install
+3. Open SnowBoard → select **Dark Custom Theme** → apply
